@@ -1,31 +1,14 @@
 pipeline {
-    agent any
-
-    tools {
-        jdk 'jdk17'       // Must match Jenkins Global Tool config
-        maven 'maven-3.8.6'
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-                sh 'ls -la'  // Verify files exist
-            }
+    agent {
+        docker {
+            image 'maven:3.8.6-eclipse-temurin-17'
+            args '-v $HOME/.m2:/root/.m2' // Cache Maven dependencies
         }
-
+    }
+    stages {
         stage('Build') {
             steps {
                 sh 'mvn clean package'
-            }
-        }
-
-        stage('Docker') {
-            steps {
-                sh '''
-                docker build -t demo12:${BUILD_NUMBER} .
-                docker images | grep demo12
-                '''
             }
         }
     }
