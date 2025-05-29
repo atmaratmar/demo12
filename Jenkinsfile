@@ -5,9 +5,10 @@ pipeline {
         maven 'maven-3.8.6'
     }
     stages {
-        stage('Checkout') {
+        stage('Checkout & Verify') {
             steps {
-                checkout scm  // Explicit checkout
+                checkout scm
+                sh 'ls -la && mvn --version'
             }
         }
         stage('Build') {
@@ -17,7 +18,8 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh 'docker build -t your-app:${BUILD_NUMBER} .'
+                sh 'docker build -t demo12:${BUILD_NUMBER} .'
+                sh 'docker images | grep demo12'
             }
         }
     }
